@@ -87,7 +87,7 @@ const CheckoutPage = () => {
     setTimeout(() => {
       setIsProcessing(false);
 
-      const userEnrolledKey = "enrolled_courses";
+      const userEnrolledKey = `enrolled_courses_${currentUser.uid}`;
       const enrolledCourses = JSON.parse(localStorage.getItem(userEnrolledKey)) || [];
       
       const formattedId = courseId.toString().trim();
@@ -96,6 +96,8 @@ const CheckoutPage = () => {
         enrolledCourses.push(formattedId);
         localStorage.setItem(userEnrolledKey, JSON.stringify(enrolledCourses));
       }
+
+      window.dispatchEvent(new Event("coursesUpdated"));
 
       const wishlistKey = "wishlist";
       const currentWishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];

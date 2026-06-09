@@ -1,18 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { NavHashLink as Link } from "react-router-hash-link";
+import { HashLink as Link } from "react-router-hash-link";
 import ThemeToggler from "./ThemeToggler";
 import menuData from "./menuData";
 import { useAuth } from "../../context/AuthContext";
 
-const Header = ({ wishlistCount, courses = [] }) => {
+const Header = ({ wishlist = [], courses = [] }) => {
   const [sticky, setSticky] = useState(false);
   const [openIndex, setOpenIndex] = useState(-1);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [navbarOpen, setNavbarOpen] = useState(false);
 
   const { currentUser, logout } = useAuth();
   const location = useLocation();
@@ -83,21 +82,10 @@ const Header = ({ wishlistCount, courses = [] }) => {
                           {displayTitle}
                         </Link>
                       ) : (
-                        <>
-                          <p onClick={() => handleSubmenu(index)} className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base font-medium lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 dark:text-white/70 dark:group-hover:text-white">
-                            {displayTitle}
-                            <span className="pl-2"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6"/></svg></span>
-                          </p>
-                          {menuItem.submenu && (
-                            <div className={`submenu bg-white dark:bg-dark relative left-0 rounded-sm transition-all duration-300 ${openIndex === index ? "block mt-2" : "hidden"} lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full`}>
-                              {menuItem.submenu.map((s, i) => (
-                                <Link smooth to={s.path} key={i} className="text-dark hover:text-primary block py-2.5 text-sm lg:px-3 dark:text-white/70">
-                                  {s.title}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
-                        </>
+                        <p onClick={() => handleSubmenu(index)} className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base font-medium lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 dark:text-white/70 dark:group-hover:text-white">
+                          {displayTitle}
+                          <span className="pl-2"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" /></svg></span>
+                        </p>
                       )}
                     </li>
                   );
@@ -110,90 +98,67 @@ const Header = ({ wishlistCount, courses = [] }) => {
             <div className={`flex items-center transition-all duration-300 ${isSearchVisible ? "flex-1" : ""}`} ref={searchRef}>
               <div className="relative flex items-center justify-end w-full">
                 <div className={`flex items-center transition-all duration-300 overflow-visible ${isSearchVisible ? "w-full md:w-[220px] opacity-100 visible" : "w-0 opacity-0 invisible"}`}>
-                  <input 
-                    type="text" 
-                    placeholder="Search..." 
-                    value={searchValue} 
-                    onChange={handleSearchChange} 
-                    onKeyDown={(e) => e.key === 'Enter' && executeSearch()} 
-                    className="w-full border border-primary/50 bg-white px-4 py-1.5 text-xs text-dark outline-none shadow-sm dark:bg-dark dark:text-white rounded-full" 
-                    autoFocus={isSearchVisible} 
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchValue}
+                    onChange={handleSearchChange}
+                    onKeyDown={(e) => e.key === 'Enter' && executeSearch()}
+                    className="w-full border border-primary/50 bg-white px-4 py-1.5 text-xs text-dark outline-none shadow-sm dark:bg-dark dark:text-white rounded-full"
                   />
                   {filteredResults.length > 0 && (
                     <div className="absolute top-[120%] left-0 w-full max-h-[300px] overflow-y-auto bg-white dark:bg-dark rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-white/10 z-[100]">
                       {filteredResults.map((course) => (
-                        <div 
-                          key={course.id}
-                          onClick={() => executeSearch(course.id)}
-                          className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer border-b border-gray-100 dark:border-white/5 last:border-0"
-                        >
-                          <p className="text-sm font-medium text-dark dark:text-white truncate">
-                            {course.title}
-                          </p>
+                        <div key={course.id} onClick={() => executeSearch(course.id)} className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer border-b border-gray-100 dark:border-white/5 last:border-0">
+                          <p className="text-sm font-medium text-dark dark:text-white truncate">{course.title}</p>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
-                <button 
-                  onClick={() => setIsSearchVisible(!isSearchVisible)} 
-                  className={`relative z-[60] flex h-9 w-9 items-center justify-center rounded-full text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 transition-all ${isSearchVisible ? "ml-2" : ""}`}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <button onClick={() => setIsSearchVisible(!isSearchVisible)} className={`relative z-[60] flex h-9 w-9 items-center justify-center rounded-full text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 transition-all ${isSearchVisible ? "ml-2" : ""}`}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
               </div>
             </div>
 
             <Link smooth to="/wishlist" className="relative flex h-10 w-10 items-center justify-center rounded-full text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 transition-all">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span key={wishlistCount} className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white animate-bounce">{wishlistCount}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+              {wishlist.length > 0 && <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white animate-bounce">{wishlist.length}</span>}
             </Link>
 
-            <span className="hidden h-6 w-[1px] bg-gray-200 dark:bg-white/10 md:block"></span>
-            
-            <div className="flex items-center">
-              {!currentUser ? (
-                <Link to="/login" className="px-4 py-2 text-sm font-medium text-dark dark:text-white">Log In</Link>
-              ) : (
-                <div className="relative" ref={profileRef}>
-                  <button 
-                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} 
-                    className="flex items-center gap-2 pr-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-all"
+            {!currentUser ? (
+              <Link to="/login" className="px-4 py-2 text-sm font-medium text-dark dark:text-white">Log In</Link>
+            ) : (
+              <div className="relative" ref={profileRef}>
+                <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="flex items-center gap-2 pr-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-all">
+                  <div className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-md">{userInitial}</div>
+                  <div className="hidden md:flex flex-col items-start pr-2">
+                    <span className="text-sm font-bold text-dark dark:text-white">{userName}</span>
+                    <span className="text-[10px] text-gray-400">Student</span>
+                  </div>
+                  <svg 
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-300 ${profileDropdownOpen ? "rotate-180" : ""}`} 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2.5"
                   >
-                    <div className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-md">
-                      {userInitial}
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 top-[120%] mt-2 w-56 bg-white dark:bg-[#121723] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/[0.06] py-2 z-[99999]">
+                    <div className="px-4 py-3 border-b border-gray-100 dark:border-white/[0.05]"><p className="text-xs font-bold text-dark dark:text-white truncate">{currentUser.email}</p></div>
+                    <div className="p-1 space-y-0.5">
+                      <Link to="/my-courses" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">📚 My Courses</Link>
+                      <Link to="/wishlist" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">❤️ My Wishlist</Link>
                     </div>
-                    <div className="hidden md:flex flex-col items-start">
-                      <span className="text-sm font-bold text-dark dark:text-white truncate max-w-[80px]">
-                        {userName}
-                      </span>
-                      <span className="text-[10px] text-gray-400 uppercase font-bold">Student</span>
-                    </div>
-                    <svg 
-                      className={`w-4 h-4 text-gray-400 transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`} 
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
-                  {profileDropdownOpen && (
-                    <div className="absolute right-0 top-[120%] mt-2 w-56 bg-white dark:bg-[#121723] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/[0.06] py-2 z-[99999]">
-                      <div className="px-4 py-3 border-b border-gray-100 dark:border-white/[0.05]">
-                        <p className="text-xs font-bold text-dark dark:text-white truncate">{currentUser.email}</p>
-                      </div>
-                      <div className="p-1 space-y-0.5">
-                        <Link to="/my-courses" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">📚 My Courses</Link>
-                        <Link to="/wishlist" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">❤️ My Wishlist</Link>
-                      </div>
-                      <div className="border-t border-gray-100 dark:border-white/[0.05] p-1">
-                        <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl">🚪 Sign Out</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
+                    <div className="border-t border-gray-100 dark:border-white/[0.05] p-1"><button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl">🚪 Sign Out</button></div>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="pl-1"><ThemeToggler /></div>
           </div>
         </div>

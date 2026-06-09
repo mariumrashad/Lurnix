@@ -1,205 +1,55 @@
-import { useEffect, useState, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { NavHashLink as Link } from "react-router-hash-link";
-import ThemeToggler from "./ThemeToggler";
-import menuData from "./menuData";
-import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState } from "react";
 
-const Header = ({ wishlistCount, courses = [] }) => {
-  const [sticky, setSticky] = useState(false);
-  const [openIndex, setOpenIndex] = useState(-1);
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-  const [filteredResults, setFilteredResults] = useState([]);
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const [navbarOpen, setNavbarOpen] = useState(false);
-
-  const { currentUser, logout } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const searchRef = useRef(null);
-  const profileRef = useRef(null);
-  const usePathName = location.pathname;
-
-  const handleStickyNavbar = () => {
-    if (window.scrollY >= 80) setSticky(true);
-    else setSticky(false);
-  };
+const ThemeToggler = () => {
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
   useEffect(() => {
-    window.addEventListener("scroll", handleStickyNavbar);
-    const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) setFilteredResults([]);
-      if (profileRef.current && !profileRef.current.contains(event.target)) setProfileDropdownOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      window.removeEventListener("scroll", handleStickyNavbar);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleSubmenu = (index) => setOpenIndex(openIndex === index ? -1 : index);
-
-  const handleSearchChange = (e) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    setFilteredResults(value.trim() === "" ? [] : courses.filter((c) => c.title.toLowerCase().includes(value.toLowerCase())));
-  };
-
-  const executeSearch = (courseId) => {
-    if (courseId) navigate(`/course/${courseId}`);
-    else if (filteredResults.length > 0) navigate(`/course/${filteredResults[0].id}`);
-    setFilteredResults([]); setSearchValue(""); setIsSearchVisible(false);
-  };
-
-  const handleLogout = async () => {
-    try { setProfileDropdownOpen(false); await logout(); navigate("/"); } catch (err) { console.error(err); }
-  };
-
-  const userInitial = currentUser?.email ? currentUser.email.charAt(0).toUpperCase() : "U";
-  const userName = currentUser?.email ? currentUser.email.split("@")[0] : "Student";
+    const root = window.document.documentElement;
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   return (
-    <header className={`header top-0 left-0 z-40 flex w-full items-center ${sticky ? "dark:bg-gray-dark dark:shadow-sticky-dark shadow-sticky fixed z-[9999] bg-white/80 backdrop-blur-md transition" : "absolute bg-transparent"}`}>
-      <div className="container mx-auto px-4">
-        <div className="relative flex w-full items-center justify-between">
-          <div className="w-[120px] md:w-60 max-w-full flex-shrink-0">
-            <Link smooth to="/#home" className={`header-logo block w-full ${sticky ? "py-5 lg:py-2" : "py-8"}`}>
-              <img src="/images/logo/logo.svg" alt="logo" className="dark:hidden block w-[180px] h-[50px] object-contain" />
-              <img src="/images/logo/logo.svg" alt="logo" className="hidden dark:block w-[180px] h-[50px] object-contain" />
-            </Link>
-          </div>
+    <button
+      aria-label="theme toggler"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="flex items-center justify-center text-black rounded-full cursor-pointer bg-gray-2 dark:bg-dark-bg h-9 w-9 dark:text-white md:h-14 md:w-14"
+    >
+      <svg
+        viewBox="0 0 23 23"
+        className="w-5 h-5 stroke-current dark:hidden md:h-6 md:w-6"
+        fill="none"
+      >
+        <path
+          d="M9.55078 1.5C5.80078 1.5 1.30078 5.25 1.30078 11.25C1.30078 17.25 5.80078 21.75 11.8008 21.75C17.8008 21.75 21.5508 17.25 21.5508 13.5C13.3008 18.75 4.30078 9.75 9.55078 1.5Z"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
 
-          <div className="flex flex-1 items-center justify-center px-4">
-            <nav id="navbarCollapse" className="navbar hidden lg:block">
-              <ul className="lg:flex lg:space-x-12">
-                {menuData.map((menuItem, index) => {
-                  const displayTitle = (menuItem.title.toLowerCase() === "about us" && currentUser) ? "Your Guide" : menuItem.title;
-                  return (
-                    <li key={index} className="group relative">
-                      {menuItem.path ? (
-                        <Link smooth to={menuItem.path} className={`flex py-2 text-base font-medium lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${usePathName === menuItem.path ? "text-primary dark:text-white" : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"}`}>
-                          {displayTitle}
-                        </Link>
-                      ) : (
-                        <>
-                          <p onClick={() => handleSubmenu(index)} className="text-dark group-hover:text-primary flex cursor-pointer items-center justify-between py-2 text-base font-medium lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 dark:text-white/70 dark:group-hover:text-white">
-                            {displayTitle}
-                            <span className="pl-2"><svg width="20" height="20" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6"/></svg></span>
-                          </p>
-                          {menuItem.submenu && (
-                            <div className={`submenu bg-white dark:bg-dark relative left-0 rounded-sm transition-all duration-300 ${openIndex === index ? "block mt-2" : "hidden"} lg:invisible lg:absolute lg:top-[110%] lg:block lg:w-[250px] lg:p-4 lg:opacity-0 lg:shadow-lg lg:group-hover:visible lg:group-hover:top-full`}>
-                              {menuItem.submenu.map((s, i) => (
-                                <Link smooth to={s.path} key={i} className="text-dark hover:text-primary block py-2.5 text-sm lg:px-3 dark:text-white/70">
-                                  {s.title}
-                                </Link>
-                              ))}
-                            </div>
-                          )}
-                        </>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </nav>
-          </div>
-
-          <div className={`flex items-center justify-end flex-shrink-0 space-x-1 md:space-x-3 transition-all duration-300 ${isSearchVisible ? "gap-2" : ""}`}>
-            <div className={`flex items-center transition-all duration-300 ${isSearchVisible ? "flex-1" : ""}`} ref={searchRef}>
-              <div className="relative flex items-center justify-end w-full">
-                <div className={`flex items-center transition-all duration-300 overflow-visible ${isSearchVisible ? "w-full md:w-[220px] opacity-100 visible" : "w-0 opacity-0 invisible"}`}>
-                  <input 
-                    type="text" 
-                    placeholder="Search..." 
-                    value={searchValue} 
-                    onChange={handleSearchChange} 
-                    onKeyDown={(e) => e.key === 'Enter' && executeSearch()} 
-                    className="w-full border border-primary/50 bg-white px-4 py-1.5 text-xs text-dark outline-none shadow-sm dark:bg-dark dark:text-white rounded-full" 
-                    autoFocus={isSearchVisible} 
-                  />
-                  {filteredResults.length > 0 && (
-                    <div className="absolute top-[120%] left-0 w-full max-h-[300px] overflow-y-auto bg-white dark:bg-dark rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-gray-100 dark:border-white/10 z-[100]">
-                      {filteredResults.map((course) => (
-                        <div 
-                          key={course.id}
-                          onClick={() => executeSearch(course.id)}
-                          className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer border-b border-gray-100 dark:border-white/5 last:border-0"
-                        >
-                          <p className="text-sm font-medium text-dark dark:text-white truncate">
-                            {course.title}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <button 
-                  onClick={() => setIsSearchVisible(!isSearchVisible)} 
-                  className={`relative z-[60] flex h-9 w-9 items-center justify-center rounded-full text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 transition-all ${isSearchVisible ? "ml-2" : ""}`}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
-              </div>
-            </div>
-
-            <Link smooth to="/wishlist" className="relative flex h-10 w-10 items-center justify-center rounded-full text-dark hover:bg-gray-100 dark:text-white dark:hover:bg-white/10 transition-all">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-              <span key={wishlistCount} className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white animate-bounce">{wishlistCount}</span>
-            </Link>
-
-            <span className="hidden h-6 w-[1px] bg-gray-200 dark:bg-white/10 md:block"></span>
-            
-            <div className="flex items-center">
-              {!currentUser ? (
-                <Link to="/login" className="px-4 py-2 text-sm font-medium text-dark dark:text-white">Log In</Link>
-              ) : (
-                <div className="relative" ref={profileRef}>
-                  <button 
-                    onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} 
-                    className="flex items-center gap-2 pr-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-all"
-                  >
-                    <div className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-md">
-                      {userInitial}
-                    </div>
-                    <div className="hidden md:flex flex-col items-start">
-                      <span className="text-sm font-bold text-dark dark:text-white truncate max-w-[80px]">
-                        {userName}
-                      </span>
-                      <span className="text-[10px] text-gray-400 uppercase font-bold">Student</span>
-                    </div>
-                    <svg 
-                      className={`w-4 h-4 text-gray-400 transition-transform ${profileDropdownOpen ? "rotate-180" : ""}`} 
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                    >
-                      <path d="M6 9l6 6 6-6" />
-                    </svg>
-                  </button>
-                  {profileDropdownOpen && (
-                    <div className="absolute right-0 top-[120%] mt-2 w-56 bg-white dark:bg-[#121723] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-gray-100 dark:border-white/[0.06] py-2 z-[99999]">
-                      <div className="px-4 py-3 border-b border-gray-100 dark:border-white/[0.05]">
-                        <p className="text-xs font-bold text-dark dark:text-white truncate">{currentUser.email}</p>
-                      </div>
-                      <div className="p-1 space-y-0.5">
-                        <Link to="/my-courses" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">📚 My Courses</Link>
-                        <Link to="/wishlist" onClick={() => setProfileDropdownOpen(false)} className="flex items-center px-4 py-2.5 text-sm text-dark dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl">❤️ My Wishlist</Link>
-                      </div>
-                      <div className="border-t border-gray-100 dark:border-white/[0.05] p-1">
-                        <button onClick={handleLogout} className="w-full text-left px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl">🚪 Sign Out</button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-
-            <div className="pl-1"><ThemeToggler /></div>
-          </div>
-        </div>
-      </div>
-    </header>
+      <svg
+        viewBox="0 0 25 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="hidden w-5 h-5 dark:block md:h-6 md:w-6"
+      >
+        <mask id="path-1-inside-1_977:1934" fill="white">
+          <path d="M12.0508 16.5C10.8573 16.5 9.71271 16.0259 8.8688 15.182C8.02489 14.3381 7.55078 13.1935 7.55078 12C7.55078 10.8065 8.02489 9.66193 8.8688 8.81802C9.71271 7.97411 10.8573 7.5 12.0508 7.5C13.2443 7.5 14.3888 7.97411 15.2328 8.81802C16.0767 9.66193 16.5508 10.8065 16.5508 12C16.5508 13.1935 16.0767 14.3381 15.2328 15.182C14.3888 16.0259 13.2443 16.5 12.0508 16.5ZM12.0508 18C13.6421 18 15.1682 17.3679 16.2934 16.2426C17.4186 15.1174 18.0508 13.5913 18.0508 12C18.0508 10.4087 17.4186 8.88258 16.2934 7.75736C15.1682 6.63214 13.6421 6 12.0508 6C10.4595 6 8.93336 6.63214 7.80814 7.75736C6.68292 8.88258 6.05078 10.4087 6.05078 12C6.05078 13.5913 6.68292 15.1174 7.80814 16.2426C8.93336 17.3679 10.4595 18 12.0508 18ZM12.0508 0..." />
+        </mask>
+        <path
+          d="M12.0508 16.5C10.8573 16.5 9.71271 16.0259 8.8688 15.182C8.02489 14.3381 7.55078 13.1935 7.55078 12C7.55078 10.8065 8.02489 9.66193 8.8688 8.81802C9.71271 7.97411 10.8573 7.5 12.0508 7.5C13.2443 7.5 14.3888 7.97411 15.2328 8.81802C16.0767 9.66193 16.5508 10.8065 16.5508 12C16.5508 13.1935 16.0767 14.3381 15.2328 15.182C14.3888 16.0259 13.2443 16.5 12.0508 16.5ZM12.0508 18C13.6421 18 15.1682 17.3679 16.2934 16.2426C17.4186 15.1174 18.0508 13.5913 18.0508 12..."
+          fill="currentColor"
+          stroke="currentColor"
+          strokeWidth="1"
+        />
+      </svg>
+    </button>
   );
 };
 
-export default Header;
+export default ThemeToggler;

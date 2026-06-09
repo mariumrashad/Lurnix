@@ -61,3 +61,7 @@
 .navbar {
   overflow-y: visible !important; 
 }
+
+html {
+  scroll-behavior: smooth;
+}

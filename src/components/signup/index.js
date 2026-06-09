@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom"; 
+import { Link, useNavigate } from "react-router-dom"; 
 import { useAuth } from "../../context/AuthContext";
 
-const Login = () => {
+const Signup = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login, loginWithGoogle } = useAuth();
+  const { register, loginWithGoogle } = useAuth(); 
   const navigate = useNavigate();
-  const location = useLocation(); 
-
-  const from = location.state?.from || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +18,8 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate(from, { replace: true }); 
+      await register(name, email, password); 
+      navigate("/"); 
     } catch (err) {
       setError(err.message.replace("Firebase: ", ""));
     }
@@ -32,30 +30,12 @@ const Login = () => {
   const handleGoogleSignIn = async () => {
     setError("");
     setLoading(true);
-
     try {
       await loginWithGoogle();
-      navigate(from, { replace: true });
+      navigate("/");
     } catch (err) {
-      console.error("Firebase Auth Error:", err);
-
-      const errorString = JSON.stringify(err) || err.message || err.code || String(err);
-
-      if (errorString.includes("popup-closed-by-user")) {
-        setError("Google sign-in was cancelled. Please try again.");
-      } 
-      else if (
-        errorString.includes("invalid-credential") || 
-        errorString.includes("account-exists-with-different-credential") ||
-        errorString.includes("credential-already-in-use")
-      ) {
-        setError("This account is already registered with a password. Please sign in using your email and password.");
-      } 
-      else {
-        setError(err.message ? err.message.replace("Firebase: ", "") : "An error occurred during sign-in.");
-      }
+      setError(err.message ? err.message.replace("Firebase: ", "") : "An error occurred during sign-in.");
     }
-
     setLoading(false);
   };
 
@@ -69,12 +49,12 @@ const Login = () => {
       <div className="w-full max-w-[380px] mx-auto bg-white/90 dark:bg-[#121723]/90 backdrop-blur-xl rounded-3xl shadow-xl p-6 md:p-8 border border-white/20 dark:border-white/5 relative overflow-hidden transition-all duration-300">
         <div className="relative z-10 text-center">
           <Link to="/" className="inline-block mb-5">
-            <img src="/images/logo/logo.svg" alt="Lurnix Logo" className="w-[140px] h-[40px] object-contain" />
+            <img src="/images/logo/logo.svg" alt="Logo" className="w-[140px] h-[40px] object-contain" />
           </Link>
 
           <div className="mb-6">
-            <h2 className="text-2xl font-bold tracking-tight text-dark dark:text-white mb-1.5">Welcome Back</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Enter your details to access your account</p>
+            <h2 className="text-2xl font-bold tracking-tight text-dark dark:text-white mb-1.5">Create Account</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Join us and start learning today</p>
           </div>
 
           {error && (
@@ -84,6 +64,18 @@ const Login = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3.5 text-left">
+            <div>
+              <label className="block text-xs font-bold mb-1.5 uppercase tracking-wide text-gray-600 dark:text-gray-300">Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="John Doe"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-[#242933] text-dark dark:text-white focus:border-primary focus:ring-1 focus:ring-primary/50 outline-none transition-all text-sm" 
+              />
+            </div>
+
             <div>
               <label className="block text-xs font-bold mb-1.5 uppercase tracking-wide text-gray-600 dark:text-gray-300">Email Address</label>
               <input
@@ -97,10 +89,7 @@ const Login = () => {
             </div>
 
             <div>
-              <div className="flex justify-between mb-1.5">
-                <label className="text-xs font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300">Password</label>
-                <Link to="#" className="text-xs font-bold text-primary hover:text-primary/80 hover:underline">Forgot?</Link>
-              </div>
+              <label className="text-xs font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300 mb-1.5 block">Password</label>
               <input
                 type="password"
                 value={password}
@@ -112,7 +101,7 @@ const Login = () => {
             </div>
 
             <button type="submit" disabled={loading} className="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-md transition-all active:scale-[0.98] mt-3.5 text-sm disabled:opacity-70">
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Sign Up"}
             </button>
           </form>
 
@@ -127,7 +116,7 @@ const Login = () => {
           </button>
 
           <p className="text-center mt-7 text-xs text-gray-500 dark:text-gray-400 font-medium">
-            New to Lurnix? <Link to="/signup" className="text-primary font-bold hover:underline">Create account</Link>
+            Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Sign In</Link>
           </p>
         </div>
       </div>
@@ -135,4 +124,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

@@ -5,28 +5,20 @@ import { useAuth } from "../../context/AuthContext";
 
 const CourseCard = ({ course, isWishlistPage = false }) => {
   const { toggleWishlist, isInWishlist } = useWishlist();
-  const { currentUser } = useAuth(); 
+  const { currentUser, myCourses } = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation(); 
 
   const isWishlisted = isInWishlist(course.id);
   const isLoggedIn = !!currentUser; 
 
-  const checkEnrollment = () => {
-    const enrolledIds = JSON.parse(localStorage.getItem("enrolled_courses")) || [];
-    
-    return enrolledIds.map(String).includes(course.id.toString());
-  };
-
-  const isEnrolled = checkEnrollment();
-
+const isEnrolled = isLoggedIn && myCourses.some(id => String(id) === String(course.id));
   const handleToggle = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!isLoggedIn) {
       localStorage.setItem("pending_wishlist_course", JSON.stringify(course));
-      
       navigate("/login", { state: { from: location.pathname } });
       return;
     }
@@ -129,12 +121,12 @@ const CourseCard = ({ course, isWishlistPage = false }) => {
               to="/my-courses"
               className="flex-[1.5] py-3 px-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-sm text-center transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-1"
             >
-              <span>✓ Muted (My Course)</span>
+              <span>✓ Purchased</span>
             </Link>
           ) : !isLoggedIn ? (
             <button 
               onClick={handleEnrollClick}
-              className="flex-[1.5] py-3 px-4 bg-red-500 text-white rounded-xl font-bold text-sm text-center transition-all hover:bg-red-600 shadow-lg shadow-red-500/20"
+              className="flex-[1.5] py-3 px-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-sm text-center transition-all shadow-lg shadow-red-500/20"
             >
               Login to Buy
             </button>

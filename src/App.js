@@ -48,10 +48,14 @@ export const WishlistProvider = ({ children }) => {
     });
   };
 
+  const removeFromWishlist = (courseId) => {
+    setWishlist((prev) => prev.filter((item) => item.id !== courseId));
+  };
+
   const isInWishlist = (id) => wishlist.some((item) => item.id === id);
 
   return (
-    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist }}>
+    <WishlistContext.Provider value={{ wishlist, toggleWishlist, isInWishlist, removeFromWishlist }}>
       {children}
     </WishlistContext.Provider>
   );
@@ -61,9 +65,10 @@ const PageWrapper = ({ children, courses }) => {
   const location = useLocation();
   const { wishlist } = useWishlist(); 
   const isAuthPage = location.pathname === "/login" || location.pathname === "/signup";
+  
   return (
     <>
-      {!isAuthPage && <Header wishlistCount={wishlist.length} courses={courses} />}
+      {!isAuthPage && <Header wishlist={wishlist} courses={courses} />}
       {children}
       {!isAuthPage && <Footer />}
     </>

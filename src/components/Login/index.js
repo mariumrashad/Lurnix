@@ -130,12 +130,7 @@ const Login = () => {
                 <label className="text-xs font-bold uppercase tracking-wide text-gray-600 dark:text-gray-300 transition-colors duration-300">
                   Password
                 </label>
-                <Link 
-                  to="#" 
-                  className="text-xs font-bold text-primary hover:text-primary/80 hover:underline transition-colors duration-300"
-                >
-                  Forgot?
-                </Link>
+                
               </div>
               <input
                 type="password"
