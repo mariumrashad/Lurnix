@@ -9,7 +9,7 @@ const Courses = ({ onWishlistUpdate }) => {
   const categories = ["All", "Design", "Development", "Marketing"];
 
   useEffect(() => {
-    fetch("http://localhost:5000/courses")
+    fetch("https://6a27405ba84f9d39e9085cc7.mockapi.io/api/v1/courses")
       .then((res) => res.json())
       .then((data) => {
         setCourses(data);

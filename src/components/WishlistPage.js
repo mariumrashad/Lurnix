@@ -1,15 +1,27 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useWishlist } from "../App"; 
+import { useAuth } from "../context/AuthContext";
 
 const WishlistPage = () => {
   const { wishlist, toggleWishlist } = useWishlist(); 
-  const isLoggedIn = false; 
+  const { currentUser } = useAuth();
+  const location = useLocation();
+
+  const isLoggedIn = !!currentUser; 
+
+  const handleScrollToCourses = () => {
+    setTimeout(() => {
+      const element = document.getElementById("courses");
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+  };
 
   return (
     <div className="pt-32 pb-20 min-h-screen bg-[#F8F9FF] dark:bg-[#060912] relative overflow-hidden">
       
-
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
         
         <div className="mb-2 flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 dark:border-gray-800 pb-10">
@@ -20,7 +32,11 @@ const WishlistPage = () => {
             <p className="text-gray-400 mt-3 font-medium text-lg">Your curated collection of future skills</p>
           </div>
           
-          <Link to="/" className="group flex items-center gap-2.5 text-primary font-bold hover:opacity-80 transition-all bg-white dark:bg-dark p-4 rounded-full shadow-sm border border-gray-100 dark:border-gray-800">
+          <Link 
+            to="/#courses" 
+            onClick={handleScrollToCourses}
+            className="group flex items-center gap-2.5 text-primary font-bold hover:opacity-80 transition-all bg-white dark:bg-dark p-4 rounded-full shadow-sm border border-gray-100 dark:border-gray-800"
+          >
             <span>Discover Courses</span>
             <svg className="group-hover:translate-x-1.5 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </Link>
@@ -29,15 +45,11 @@ const WishlistPage = () => {
         {wishlist.length === 0 ? (
           <div className="relative py-28 flex items-center justify-center">
             
-<div className="absolute -inset-10 z-0">
-  
-  <div className="absolute top-10 left-10 w-72 h-72 bg-orange-400/30 dark:bg-orange-600/20 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[60px] animate-blob"></div>
-  
-  <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-400/30 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[60px] animate-blob animation-delay-2000"></div>
-  
-  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/20 dark:bg-purple-900/10 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[70px] animate-blob animation-delay-4000"></div>
-  
-</div>
+            <div className="absolute -inset-10 z-0">
+              <div className="absolute top-10 left-10 w-72 h-72 bg-orange-400/30 dark:bg-orange-600/20 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[60px] animate-blob"></div>
+              <div className="absolute bottom-10 right-10 w-72 h-72 bg-purple-400/30 dark:bg-purple-600/20 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[60px] animate-blob animation-delay-2000"></div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-500/20 dark:bg-purple-900/10 rounded-full mix-blend-multiply dark:mix-blend-lighten blur-[70px] animate-blob animation-delay-4000"></div>
+            </div>
 
             <div className="relative z-10 text-center py-20 px-10 max-w-xl bg-white/60 dark:bg-[#0c111d]/70 backdrop-blur-xl rounded-[3rem] shadow-2xl shadow-primary/5 border border-white/20 dark:border-gray-800/50 flex flex-col items-center">
               
@@ -57,7 +69,11 @@ const WishlistPage = () => {
                 Add courses you're interested in to build your dream curriculum and track your next learning goals.
               </p>
               
-              <Link to="/" className="bg-primary text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest border border-primary hover:border-white/20">
+              <Link 
+                to="/#courses" 
+                onClick={handleScrollToCourses}
+                className="bg-primary text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest border border-primary hover:border-white/20"
+              >
                 Explore The Catalog
               </Link>
             </div>
@@ -98,24 +114,27 @@ const WishlistPage = () => {
                     </div>
                     
                     <div className="flex items-center gap-3">
-  <Link to={`/course/${course.id}`} className="px-6 py-3 rounded-xl font-bold text-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all shadow-sm">
-    View Details
-  </Link>
-  
-  {/* هعمل هنا زرار يوديني للوج ان  */}
-  {!isLoggedIn ? (
-    <Link 
-      to="/login" 
-      className="px-8 py-3 bg-red-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 hover:scale-105 transition-all text-center"
-    >
-      Login to Buy
-    </Link>
-  ) : (
-    <button className="px-8 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/30 hover:scale-105 transition-all">
-      Enroll Now
-    </button>
-  )}
-</div>
+                      <Link to={`/course/${course.id}`} className="px-6 py-3 rounded-xl font-bold text-sm border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all shadow-sm">
+                        View Details
+                      </Link>
+                      
+                      {!isLoggedIn ? (
+                        <Link 
+                          to="/login" 
+                          state={{ from: location.pathname }} 
+                          className="px-8 py-3 bg-red-500 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/30 hover:scale-105 transition-all text-center"
+                        >
+                          Login to Buy
+                        </Link>
+                      ) : (
+                        <Link
+                          to={`/checkout/${course.id}`}
+                          className="px-8 py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/30 hover:scale-105 transition-all text-center"
+                        >
+                          Enroll Now
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

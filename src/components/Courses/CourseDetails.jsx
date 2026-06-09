@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useWishlist } from "../../App"; 
+import { useAuth } from "../../context/AuthContext";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -7,8 +9,23 @@ const CourseDetails = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const { currentUser } = useAuth();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const checkEnrollment = () => {
+    if (!currentUser) return false;
+    const userEnrolledKey = `enrolled_courses_${currentUser.uid}`;
+    const enrolledIds = JSON.parse(localStorage.getItem(userEnrolledKey)) || [];
+    return enrolledIds.includes(Number(id)) || enrolledIds.includes(String(id));
+  };
+
+  const isEnrolled = checkEnrollment();
+  const isFavorite = course && !isEnrolled ? isInWishlist(course.id) : false;
+
   useEffect(() => {
-    fetch(`http://localhost:5000/courses/${id}`)
+    const endpoint = id.startsWith("rec_") ? "recommended_courses" : "courses";
+
+    fetch(`http://localhost:5000/${endpoint}/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Course not found");
         return res.json();
@@ -16,12 +33,26 @@ const CourseDetails = () => {
       .then((data) => {
         setCourse(data);
         setLoading(false);
+
+        if (isEnrolled && isInWishlist(data.id)) {
+          toggleWishlist(data);
+        }
       })
       .catch((err) => {
         console.error(err);
+        setCourse(null); 
         setLoading(false);
       });
-  }, [id]);
+  }, [id, currentUser, isEnrolled]);
+
+  const handleWishlistClick = () => {
+    if (!currentUser) {
+      localStorage.setItem("pending_wishlist_course", JSON.stringify(course));
+      navigate("/login", { state: { from: `/course/${id}` } });
+      return;
+    }
+    toggleWishlist(course);
+  };
 
   if (loading) {
     return (
@@ -81,9 +112,8 @@ const CourseDetails = () => {
         <div className="flex flex-wrap -mx-4">
           
           <div className="w-full lg:w-2/3 px-4">
-            
             <div className="flex justify-start mb-12">
-              <div className="relative w-full max-w-[650px] rounded-[32px] overflow-hidden shadow-2xl border-1  dark:border-gray-800 shadow-primary/5">
+              <div className="relative w-full max-w-[650px] rounded-[32px] overflow-hidden shadow-2xl border-1 dark:border-gray-800 shadow-primary/5">
                 <img 
                   src={course.image} 
                   alt={course.title} 
@@ -127,18 +157,40 @@ const CourseDetails = () => {
                 <div className="mb-8">
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">One-time payment</p>
                   <div className="flex items-center gap-3">
-                    <span className="text-4xl font-black dark:text-white">$49.99</span>
+                    <span className="text-4xl font-black dark:text-white">{course.price}</span>                    
                     <span className="text-gray-400 line-through text-lg font-bold">$149.00</span>
                   </div>
                 </div>
 
                 <div className="space-y-3 mb-8">
-                  <button className="w-full py-5 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold transition-all shadow-xl shadow-primary/25 active:scale-95">
-                    Start Learning Now
-                  </button>
-                  <button className="w-full py-4 border-2 border-gray-100 dark:border-gray-800 dark:text-white rounded-2xl font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
-                    Add to Wishlist
-                  </button>
+                  {isEnrolled ? (
+                    <button 
+                      onClick={() => navigate(`/course/${course.id}/watch`)}
+                      className="w-full py-5 bg-green-500 hover:bg-green-600 text-white rounded-2xl font-bold transition-all shadow-xl shadow-green-500/25 active:scale-95 flex items-center justify-center gap-2"
+                    >
+                      <span>▶ Start Watching Now</span>
+                    </button>
+                  ) : (
+                    <>
+                      <button 
+                        onClick={() => navigate(`/checkout/${course.id}`)}
+                        className="w-full py-5 bg-primary hover:bg-primary/90 text-white rounded-2xl font-bold transition-all shadow-xl shadow-primary/25 active:scale-95"
+                      >
+                        Start Learning Now
+                      </button>
+                      
+                      <button 
+                        onClick={handleWishlistClick}
+                        className={`w-full py-4 border-2 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 active:scale-95 ${
+                          isFavorite 
+                            ? "border-red-500/20 bg-red-500/5 text-red-500 hover:bg-red-500/10" 
+                            : "border-gray-100 dark:border-gray-800 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5"
+                        }`}
+                      >
+                        {isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
+                      </button>
+                    </>
+                  )}
                 </div>
 
                 <div className="space-y-4">

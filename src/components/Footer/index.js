@@ -31,11 +31,21 @@ const Footer = () => {
                 The all-in-one educational platform for accessing premium courses and study summaries. Empowering your learning journey with Lurnix.
               </p>
               <div className="flex items-center gap-4">
-                <a href="#" className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-white/50 dark:bg-white/5 text-primary hover:bg-primary hover:text-white transition-all duration-300 shadow-sm">
+                <a 
+                  href="https://www.facebook.com/share/1bXJSbHnnL/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-white/50 dark:bg-white/5 text-primary hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
+                >
                   <svg className="fill-current w-5 h-5" viewBox="0 0 24 24"><path d="M14 13.5h2.5l1-4H14v-2c0-1.03 0-2 2-2h1.5V2.14c-.326-.043-1.557-.14-2.857-.14C11.928 2 10 3.657 10 6.7v2.8H7v4h3V22h4v-8.5Z" /></svg>
                 </a>
-                <a href="#" className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-white/50 dark:bg-white/5 text-[#229ED9] hover:bg-[#229ED9] hover:text-white transition-all duration-300 shadow-sm">
-                  <svg className="fill-current w-5 h-5" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.24.37-.48 1.02-.73 4-1.74 6.67-2.88 8.01-3.41 3.81-1.51 4.6-1.77 5.12-1.78.11 0 .37.03.54.17.14.11.18.26.2.38.02.12.02.25.01.38Z" /></svg>
+                <a 
+                  href="https://www.linkedin.com/in/marium-rashad-6a53582a4?utm_source=share_via&utm_content=profile&utm_medium=member_android" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20 bg-white/50 dark:bg-white/5 text-[#0077b5] hover:bg-[#0077b5] hover:text-white transition-all duration-300 shadow-sm"
+                >
+                  <svg className="fill-current w-5 h-5" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77Z"/></svg>
                 </a>
               </div>
             </div>
@@ -76,7 +86,7 @@ const Footer = () => {
                 <p className="text-body-color dark:text-gray-400 text-sm font-medium">info@lurnix-platform.com</p>
                 <div className="pt-2">
                   <span className="inline-block bg-primary/10 dark:bg-primary/20 text-primary px-4 py-2 rounded-xl text-sm font-bold border border-primary/20">
-                    +20 123 456 7890
+                    +20 115 703 0598
                   </span>
                 </div>
               </div>
