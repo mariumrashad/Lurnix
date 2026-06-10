@@ -146,9 +146,9 @@ const Hero = () => {
                     <Link to="/login" className="group relative flex items-center gap-3 overflow-hidden rounded-2xl bg-primary px-10 py-4 text-base font-bold text-white transition-all duration-300 hover:scale-105 active:scale-95">
                       <span className="relative z-10">Join Us Now</span>
                     </Link>
-                    <a href="#courses" className="inline-flex items-center gap-2 rounded-2xl border-2 border-black/10 bg-black/5 dark:bg-white/5 px-10 py-4 text-base font-bold text-black dark:text-white transition-all duration-300 hover:bg-black/10 dark:hover:bg-white/10 backdrop-blur-sm">
+                    <Link smooth to="#courses" className="inline-flex items-center gap-2 rounded-2xl border-2 border-black/10 bg-black/5 dark:bg-white/5 px-10 py-4 text-base font-bold text-black dark:text-white transition-all duration-300 hover:bg-black/10 dark:hover:bg-white/10 backdrop-blur-sm">
                       <span>Explore Courses</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
