@@ -50,8 +50,7 @@ const MyCoursesPage = () => {
   return (
     <div className="pt-32 pb-20 min-h-screen bg-[#F8F9FF] dark:bg-[#060912] relative overflow-hidden">
       <div className="container mx-auto px-4 max-w-5xl relative z-10">
-        
-        {/* Header Section */}
+
         <div className="mb-12">
           <h1 className="text-5xl font-black text-dark dark:text-white tracking-tight">
             My Courses <span className="text-primary italic">.</span>
@@ -90,17 +89,17 @@ const MyCoursesPage = () => {
                   📚
                 </div>
               </div>
-              
+
               <h2 className="text-3xl font-black text-dark dark:text-white mb-4 tracking-tight">
                 No Courses Yet
               </h2>
               <p className="text-gray-500 dark:text-gray-400 mb-10 max-w-sm font-medium">
                 You haven't enrolled in any courses yet. Explore our catalog and start your learning journey today!
               </p>
-              
-              <Link 
-                to="/#courses" 
-                smooth 
+
+              <Link
+                to="/#courses"
+                smooth
                 className="bg-primary text-white px-10 py-4 rounded-2xl font-black shadow-lg shadow-primary/30 hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest border border-primary"
               >
                 Explore The Catalog
@@ -112,13 +111,20 @@ const MyCoursesPage = () => {
             {myCourses.map((course) => (
               <div key={course.id} className="group bg-white dark:bg-[#0c111d] rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-gray-800 shadow-xl transition-all">
                 <div className="relative h-56 overflow-hidden">
-                    <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                    <div className="absolute top-4 left-4 bg-white/90 px-4 py-1.5 rounded-2xl text-primary text-xs font-black">{course.level}</div>
+                  <img src={course.image} alt={course.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <div className="absolute top-4 left-4 bg-white/90 px-4 py-1.5 rounded-2xl text-primary text-xs font-black">{course.level}</div>
                 </div>
                 <div className="p-8">
                   <h3 className="text-2xl font-bold text-dark dark:text-white mb-2">{course.title}</h3>
                   <div className="flex gap-4 mt-6">
+                    <button
+                      onClick={() => navigate(`/course/${course.id}`)}
+                      className="flex-1 py-4 bg-gray-100 dark:bg-gray-800 text-dark dark:text-white font-bold text-xs rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      View Details
+                    </button>
                     <button onClick={() => navigate(`/course/${course.id}/watch`)} className="flex-1 py-4 bg-primary text-white font-bold text-xs rounded-2xl">Continue Learning</button>
+                    
                   </div>
                 </div>
               </div>

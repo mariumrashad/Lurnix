@@ -5,38 +5,54 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 @layer base {
+  :root {
+    --transition-duration: 0.2s;
+  }
+
   body {
     font-family: 'Poppins', sans-serif;
     @apply bg-white text-[#788293] dark:bg-[#1d2430] dark:text-[#959cb1];
   }
 
   html {
-    scroll-behavior: smooth !important;
+    scroll-behavior: smooth;
   }
 
-  
+  /* تعطيل كل الترانزيشنز أثناء تبديل الثيم (الحل السحري للـ Glitch) */
+  .disable-transitions *,
+  .disable-transitions *::before,
+  .disable-transitions *::after {
+    transition: none !important;
+  }
+
+  /* ترانزيشن خفيف وسريع فقط على العناصر المهمة */
+  .theme-transition {
+    transition: background-color 0.2s ease-in-out,
+                color 0.2s ease-in-out,
+                border-color 0.2s ease-in-out,
+                fill 0.2s ease-in-out;
+  }
+
+  /* استثناءات صارمة */
+  img,
+  svg,
+  .no-transition,
+  .no-transition * {
+    transition: none !important;
+  }
+
   @media (max-width: 767px) {
     body {
       overflow-x: hidden !important;
       width: 100% !important;
     }
-
     header {
       width: 100% !important;
       max-width: 100% !important;
-      position: fixed !important; 
+      position: fixed !important;
       left: 0 !important;
       right: 0 !important;
     }
-  }
-
-  /* *, *::before, *::after {
-    transition: none !important;
-    transition-duration: 0s !important;
-  } */
-
-  button, a, img, .transition-all {
-    transition: all 0.15s ease-out !important;
   }
 }
 
@@ -44,24 +60,43 @@
   .container {
     @apply mx-auto max-w-[1320px] px-4;
   }
-  
+
   .sticky .header-logo {
-    @apply py-2 lg:py-1; 
+    @apply py-2 lg:py-1;
   }
 
   .navbar {
     max-height: 85vh;
     overflow-y: auto;
   }
-  
+
   .submenu {
     transition: all 0.3s ease;
   }
-}
-.navbar {
-  overflow-y: visible !important; 
+
+  /* أزرار وكروت تحتاج ترانزيشن ناعم */
+  .card,
+  .btn,
+  .nav-link {
+    @apply theme-transition;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+/* تحسينات إضافية للـ Hero Section */
+#home {
+  transition: background-color 0.3s ease;
+}
+
+.fill-wave {
+  transition: fill 0.25s ease !important;
+}
+
+/* تحسين أداء الـ Dark/Light Switch */
+html.dark {
+  color-scheme: dark;
+}
+
+/* للـ SVG Wave في الأسفل */
+.dark .fill-\[#F8F9FF\] {
+  fill: #04070D;
 }

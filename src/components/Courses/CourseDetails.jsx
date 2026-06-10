@@ -21,29 +21,38 @@ const CourseDetails = () => {
 
   const isEnrolled = checkEnrollment();
   const isFavorite = course && !isEnrolled ? isInWishlist(course.id) : false;
+useEffect(() => {
+  const fetchCourse = async () => {
+    setLoading(true);
+    const urls = [
+      `https://6a27405ba84f9d39e9085cc7.mockapi.io/api/v1/courses/${id}`,
+      `https://6a27405ba84f9d39e9085cc7.mockapi.io/api/v1/recommended_courses/${id}`
+    ];
 
-  useEffect(() => {
-    const endpoint = id.startsWith("rec_") ? "recommended_courses" : "courses";
-
-    fetch(`http://localhost:5000/${endpoint}/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Course not found");
-        return res.json();
-      })
-      .then((data) => {
-        setCourse(data);
-        setLoading(false);
-
-        if (isEnrolled && isInWishlist(data.id)) {
-          toggleWishlist(data);
+    for (const url of urls) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          setCourse(data);
+          setLoading(false);
+          
+          if (isEnrolled && isInWishlist(data.id)) {
+            toggleWishlist(data);
+          }
+          return; 
         }
-      })
-      .catch((err) => {
-        console.error(err);
-        setCourse(null); 
-        setLoading(false);
-      });
-  }, [id, currentUser, isEnrolled]);
+      } catch (err) {
+        continue; 
+      }
+    }
+    
+    setCourse(null);
+    setLoading(false);
+  };
+
+  fetchCourse();
+}, [id, currentUser, isEnrolled]);
 
   const handleWishlistClick = () => {
     if (!currentUser) {

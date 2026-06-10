@@ -1,4 +1,5 @@
 import React from "react";
+import { HashLink as Link } from 'react-router-hash-link';
 
 const Footer = () => {
   return (
@@ -55,10 +56,10 @@ const Footer = () => {
             <div className="mb-10">
               <h3 className="text-black dark:text-white mb-8 text-lg font-bold">Quick Links</h3>
               <ul className="space-y-4">
-                <li><a href="#home" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">Home</a></li>
-                <li><a href="#courses" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">Courses</a></li>
-                <li><a href="#about" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">About Us</a></li>
-              </ul>
+  <li><Link smooth to="/#home" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">Home</Link></li>
+  <li><Link smooth to="/#courses" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">Courses</Link></li>
+  <li><Link smooth to="/#about" className="text-body-color dark:text-gray-400 hover:text-primary transition-colors text-sm">About Us</Link></li>
+</ul>
             </div>
           </div>
 

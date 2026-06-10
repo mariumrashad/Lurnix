@@ -128,8 +128,15 @@ const Header = ({ wishlist = [], courses = [] }) => {
             </Link>
 
             {!currentUser ? (
-              <Link to="/login" className="px-4 py-2 text-sm font-medium text-dark dark:text-white">Log In</Link>
-            ) : (
+  <div className="flex items-center gap-2">
+    <Link to="/login" className="px-4 py-2 text-sm font-medium text-dark dark:text-white hover:text-primary transition-all">
+      Log In
+    </Link>
+   <Link to="/signup" className="hidden md:flex px-5 py-2.5 text-sm font-bold text-white bg-primary rounded-full hover:bg-primary/90 transition-all shadow-md">
+      Sign Up
+    </Link>
+  </div>
+) : (
               <div className="relative" ref={profileRef}>
                 <button onClick={() => setProfileDropdownOpen(!profileDropdownOpen)} className="flex items-center gap-2 pr-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-all">
                   <div className="h-9 w-9 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shadow-md">{userInitial}</div>
